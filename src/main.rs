@@ -1,17 +1,50 @@
+use std::io;
 fn main() {
-    // Example of binary to decimal conversion:
-    let input = "0101"; 
-    let decimal = binary_to_dec(input);
-    println!("The binary number {} in decimal is: {}", input, decimal);
+    loop {
+        println!("--------------------\nChoose an option:");
+        println!("1. Convert binary to decimal");
+        println!("2. Convert decimal to binary");
+        println!("3. Convert binary to hexadecimal");
+        println!("4. Exit \n--------------------");
 
-    // Example of decimal to binary conversion:
-    let input = "128133"; // Example decimal number
-    let binary = decimal_to_bin(input);
-    println!("The decimal number {} in binary is: {}", input, binary);
+        let mut choice = String::new();
+        io::stdin().read_line(&mut choice).expect("--------------------\nFailed to read input");
+        let choice = choice.trim();
 
-    let binary = "0001111101000101"; // Represents "1F45" in hexadecimal
-    let hex = binary_to_hex(binary);
-    println!("{} in hexadecimal is: {}", binary, hex); 
+        match choice {
+            "1" => {
+                println!("--------------------\nEnter a binary number:");
+                let mut input = String::new();
+                io::stdin().read_line(&mut input).expect("Failed to read input");
+                let input = input.trim();
+                let decimal = binary_to_dec(input);
+                println!("Binary {} in decimal is: {} \n--------------------", input, decimal);
+            }
+            "2" => {
+                println!("Enter a decimal number:");
+                let mut input = String::new();
+                io::stdin().read_line(&mut input).expect("Failed to read input");
+                let input = input.trim();
+                let binary = decimal_to_bin(input);
+                println!("Decimal {} in binary is: {} \n--------------------", input, binary);
+            }
+            "3" => {
+                println!("Enter a binary number:");
+                let mut input = String::new();
+                io::stdin().read_line(&mut input).expect("Failed to read input");
+                let input = input.trim();
+                let hex = binary_to_hex(input);
+                println!("Binary {} in hexadecimal is: {} \n--------------------", input, hex);
+            }
+            "4" => {
+                println!("--------------------\nExiting...");
+                break;
+            }
+            _ => println!("--------------------\nInvalid option, please try again."),
+        }
+
+        println!(); // Line break for readability
+    }
 }
 
 // Function to convert a binary string to a decimal number
