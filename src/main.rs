@@ -1,11 +1,26 @@
 use std::io;
+use std::process::Command;
+
+fn clear_terminal() {
+    if cfg!(target_os = "windows") {
+        Command::new("cmd")
+            .args(["/c", "cls"])
+            .status()
+            .unwrap();
+    } else {
+        Command::new("clear")
+            .status()
+            .unwrap();
+    }
+}
 fn main() {
     loop {
         println!("--------------------\nChoose an option:");
         println!("1. Convert binary to decimal");
         println!("2. Convert decimal to binary");
         println!("3. Convert binary to hexadecimal");
-        println!("4. Exit \n--------------------");
+        println!("4. Convert hexadecimal to decimal");
+        println!("5. Exit \n--------------------");
 
         let mut choice = String::new();
         io::stdin().read_line(&mut choice).expect("--------------------\nFailed to read input");
@@ -18,7 +33,8 @@ fn main() {
                 io::stdin().read_line(&mut input).expect("Failed to read input");
                 let input = input.trim();
                 let decimal = binary_to_dec(input);
-                println!("Binary {} in decimal is: {} \n--------------------", input, decimal);
+                clear_terminal();
+                println!("--------------------\nBinary {} in decimal is: {} \n--------------------", input, decimal);
             }
             "2" => {
                 println!("Enter a decimal number:");
@@ -26,7 +42,8 @@ fn main() {
                 io::stdin().read_line(&mut input).expect("Failed to read input");
                 let input = input.trim();
                 let binary = decimal_to_bin(input);
-                println!("Decimal {} in binary is: {} \n--------------------", input, binary);
+                clear_terminal();
+                println!("--------------------\nDecimal {} in binary is: {} \n--------------------", input, binary);
             }
             "3" => {
                 println!("Enter a binary number:");
@@ -34,13 +51,24 @@ fn main() {
                 io::stdin().read_line(&mut input).expect("Failed to read input");
                 let input = input.trim();
                 let hex = binary_to_hex(input);
-                println!("Binary {} in hexadecimal is: {} \n--------------------", input, hex);
+                clear_terminal();
+                println!("--------------------\nBinary {} in hexadecimal is: {} \n--------------------", input, hex);
             }
             "4" => {
+                println!("Enter a hexadecimal number:");
+                let mut input = String::new();
+                io::stdin().read_line(&mut input).expect("Failed to read input");
+                let input = input.trim();
+                let decimal = hexadecimal_to_decimal(input);
+                clear_terminal();
+                println!("--------------------\nHexadecimal {} in decimal is: {} \n--------------------", input, decimal);
+            }
+            "5" => {
+                clear_terminal();
                 println!("--------------------\nExiting...");
                 break;
             }
-            _ => println!("--------------------\nInvalid option, please try again."),
+            _ => println!("--------------------\nInvalid option, please try again.\n--------------------"),
         }
 
         println!(); // Line break for readability
@@ -109,4 +137,22 @@ fn binary_to_hex(input: &str) -> String {
 
     let reversed_hex: String = hex_string.chars().rev().collect(); // Reverse the final hex string
     reversed_hex
+}
+
+fn hexadecimal_to_decimal(input: &str) -> i32 {
+    let mut result = 0;
+    let mut exponent = 0;
+
+    for ch in input.chars().rev() {
+        let digit = match ch {
+            '0'..='9' => ch.to_digit(16).expect("Error converting digit"), // Números (0-9)
+            'A'..='F' => ch.to_digit(16).expect("Error converting letter"),
+            'a'..='f' => ch.to_digit(16).expect("Error converting letter"), 
+            _ => panic!("Invalid Hexadecimal Character!"), // Manejo de error
+        };
+
+        result += (digit as i32) * 16_i32.pow(exponent);
+        exponent += 1;
+    }
+    result
 }
